@@ -36,6 +36,6 @@ git innit let you intialise git in your folder go to your termimal directly or t
  
   ## git merge 
   git merge is used to merge the files from the branch you wanna use git merge (name) to merge the files from the branch
-  kinda like git merge (branchname)(from)/(branchname)(to) ....
+  kinda like git merge (branchname)(from)/(branchname)(to)
 
 
