@@ -651,6 +651,561 @@ public static void main(String[] args) {
 }
 ```
 ### Interfaces
+# incomplete:
+### Object polymorphism
+```java
+String text = "text";
+Object textString = "another string";
+```
+```java
+String text = "text";
+Object textString = text;
+```
+```java
+Object textString = "another string";
+String text = textString; // WON'T WORK!
+```
+he inheritance hierarchy lists all the classes that the given class has inherited. Inherited classes are listed in the order of inheritance, with class being inspected always at the bottom. In the inheritance hierarchy of the String class, we see that the String class inherits the Object class. In Java, each class can inherit one class at most. On the other hand, the inherited class may have inherited another class. As such, a class may indirectly inherit more than a single class.
+
+The inheritance hierarchy can also be thought of as a list of the different types that the class implements.
+
+The String class implements the Serializable, CharSequence, and Comparable <String> interfaces. An interface is also a type. According to the class' API description, the following interfaces can be set as the type of a String object.
+<br>
+```java
+Serializable serializableString = "string";
+CharSequence charSequenceString = "string";
+Comparable<String> comparableString = "string";
+```
+Since we're able to define the type of a method's parameter, we can declare methods that receive an object that implements a specific interface. When a method's parameter is an interface, any object that implements that interface can be passed to it as an argument.
+
+We'll extend the Printer class so that it has a method for printing the characters of objects that implement the CharSequence interface. The CharSequence interface provides, among other things, methods int length() for getting a string's length and char charAt(int index), which retrieves a character from a given index.
+```java
+public class Printer {
+
+    public void printManyTimes(Object object, int times) {
+        int i = 0;
+        while (i < times) {
+            System.out.println(object);
+            i = i + 1;
+        }
+    }
+
+    public void printCharacters(CharSequence charSequence) {
+        int i = 0;
+        while (i < charSequence.length()) {
+            System.out.println(charSequence.charAt(i));
+            i = i + 1;
+        }
+    }
+}
+```
+## PART 10
+### Handling collections as streams
+```java
+// We initialise the scanner and the list into which the input is read
+Scanner scanner = new Scanner(System.in);
+List<String> inputs = new ArrayList<>();
+
+// reading inputs
+while (true) {
+    String row = scanner.nextLine();
+    if (row.equals("end")) {
+        break;
+    }
+
+    inputs.add(row);
+}
+
+// counting the number of values divisible by three
+long numbersDivisibleByThree = inputs.stream()
+    .mapToInt(s -> Integer.valueOf(s))
+    .filter(number -> number % 3 == 0)
+    .count();
+
+// working out the average
+double average = inputs.stream()
+    .mapToInt(s -> Integer.valueOf(s))
+    .average()
+    .getAsDouble();
+
+// printing out the statistics
+System.out.println("Divisible by three " + numbersDivisibleByThree);
+System.out.println("Average number: " + average);
+```
+A stream can be formed from any object that implements the Collection interface (e.g., ArrayList, HashSet, HashMap, ...) with the stream() method. The string values ​​are then converted ("mapped") to integer form using the stream's mapToInt(value -> conversion) method. The conversion is implemented by the valueOf method of the Integer class, which we've used in the past. We then use the filter (value -> filter condition) method to filter out only those numbers that are divisible by three for further processing. Finally, we call the stream's count() method, which counts the number of elements in the stream and returns it as a long type variable.
+
+Lambda Expressions
+```jav
+// Lambda expression to add two numbers
+BinaryOperator<Integer> add = (a, b) -> a + b;
+
+```
+Stream Methods
+```java
+List<Integer> list = new ArrayList<>();
+list.add(3);
+list.add(7);
+list.add(4);
+list.add(2);
+list.add(6);
+
+ArrayList<Integer> values = list.stream()
+    .filter(value -> value > 5)
+    .map(value -> value * 2)
+    .collect(Collectors.toCollection(ArrayList::new));
+```
+Terminal Operations
+Let's take a look at four terminal operations: the count method for counting the number of values on a list, the forEach method for going a through list values, the collect method for gathering the list values ​​into a data structure, and the reduce method for combining the list items.
+```java
+// suppose we have a list of persons
+// ArrayList<Person> persons = new ArrayList<>();
+
+long count = persons.stream()
+    .filter(person -> person.getFirstName().startsWith("A"))
+    .count();
+System.out.println("Count: " + count);
+```
+Objects and Stream
+```java
+// let's assume that we have a list of books
+// List<Book> books = new ArrayList<>();
+
+double average = books.stream()
+    .map(book -> book.getAuthor())
+    .mapToInt(author -> author.getBirthYear())
+    .average()
+    .getAsDouble();
+
+System.out.println("Average of the authors' birth years: " + average);
+
+// the mapping of a book to an author could also be done with a single map call
+// double average = books.stream()
+//     .mapToInt(book -> book.getAuthor().getBirthYear())
+//     ...
+```
+Files and Streams
+```java
+List<String> rows = new ArrayList<>();
+
+try {
+    Files.lines(Paths.get("file.txt")).forEach(row -> rows.add(row));
+} catch (Exception e) {
+    System.out.println("Error: " + e.getMessage());
+}
+
+// do something with the read lines
+```
+### The Comparable Interface
+```java
+List<Member> member = new ArrayList<>();
+member.add(new Member("mikael", 182));
+member.add(new Member("matti", 187));
+member.add(new Member("ada", 184));
+
+member.stream().forEach(m -> System.out.println(m));
+System.out.println();
+// sorting the stream that is to be printed using the sorted method
+member.stream().sorted().forEach(m -> System.out.println(m));
+member.stream().forEach(m -> System.out.println(m));
+// sorting a list with the sort-method of the Collections class
+Collections.sort(member);
+member.stream().forEach(m -> System.out.println(m));
+```
+multiple interface with ,
+<br> Sorting Method as a Lambda Expression
+```java
+ArrayList<Person> persons = new ArrayList<>();
+persons.add(new Person("Ada Lovelace", 1815));
+persons.add(new Person("Irma Wyman", 1928));
+persons.add(new Person("Grace Hopper", 1906));
+persons.add(new Person("Mary Coombs", 1929));
+
+persons.stream().sorted((p1, p2) -> {
+    return p1.getBirthYear() - p2.getBirthYear();
+}).forEach(p -> System.out.println(p.getName()));
+
+System.out.println();
+
+persons.stream().forEach(p -> System.out.println(p.getName()));
+
+System.out.println();
+
+Collections.sort(persons, (p1, p2) -> p1.getBirthYear() - p2.getBirthYear());
+
+persons.stream().forEach(p -> System.out.println(p.getName()));
+```
+### Other useful techniques
+StringBuilder
+String creation - although unnoticeable at a small scale - is not a quick operation. Space is allocated in memory for each string where the string is then placed. If the string is only needed as part of creating a larger string, performance should be improved.
+
+Java's ready-made StringBuilder class provides a way to concatenate strings without the need to create them. A new StringBuilder object is created with a new StringBuilder() call, and content is added to the object using the overloaded append method, i.e., there are variations of it for different types of variables. Finally, the StringBuilder object provides a string using the toString method.
+
+In the example below, only one string is created.
+```java
+StringBuilder numbers = new StringBuilder();
+for (int i = 1; i < 5; i++) {
+    numbers.append(i);
+}
+System.out.println(numbers.toString());
+```
+Regular Expressions
+```java
+System.out.print("Provide a student number: ");
+String number = scanner.nextLine();
+
+if (number.matches("01[0-9]{7}")) {
+    System.out.println("Correct format.");
+} else {
+    System.out.println("Incorrect format.");
+}
+```
+Alternation (Vertical Line)
+```java
+String string = "1111";
+
+if (string.matches("00|111|0000")) {
+    System.out.println("The string contained one of the three alternatives");
+} else {
+    System.out.println("The string contained none of the three alternatives");
+}
+```
+Quantifiers
+```java
+String string = "trolololololo";
+
+if (string.matches("trolo(lo)*")) {
+    System.out.println("Correct form.");
+} else {
+    System.out.println("Incorrect form.");
+}
+```
+The quantifier + repeats 1 ... times, for example;<br>
+The quantifier * repeats 0 ... times, for example;
+<br>The quantifier {a} repeats a times, for example:
+<br>The quantifier {a,b} repeats a ... b times, for example:
+<br>The quantifier {a,} repeats a ... times, for example:
+<br>
+
+Character Classes (Square Brackets)
+```java
+public enum Suit {
+    DIAMOND, SPADE, CLUB, HEART
+}
+
+public class Card {
+
+    private int value;
+    private Suit suit;
+
+    public Card(int value, Suit suit) {
+        this.value = value;
+        this.suit = suit;
+    }
+
+    @Override
+    public String toString() {
+        return suit + " " + value;
+    }
+
+    public Suit getSuit() {
+        return suit;
+    }
+
+    public int getValue() {
+        return value;
+    }
+}
+
+Card first = new Card(10, Suit.HEART);
+
+System.out.println(first);
+
+if (first.getSuit() == Suit.SPADE) {
+    System.out.println("is a spade");
+} else {
+    System.out.println("is not a spade");
+}
+
+```
+he numeric identifier of an enum field value can be found with ordinal(). place of the enum
+<br>Object References In Enums
+
+Iterator
+<br>
+The iterator is requested from the cards list containing cards. The iterator can be thought of as a "finger" that always points to a particular object inside the list. Initially it points to the first item, then to the next, and so on... until all the objects have been gone through with the help of the "finger".
+
+The iterator offers a few methods. The hasNext() method is used to ask if there are any objects still to be iterated over. If there are, the next object in line can be requested from the iterator using the next() method. This method returns the next object in line to be processed and moves the iterator, or "finger", to point to the following object in the collection.
+ <br>The reason for this error lies in the fact that when a list is iterated over using the forEach method, it's assumed that the list is not modified during the traversal. Modifying the list (in this case deleting elements) causes an error - we can think of the forEach method as getting "confused" here.
+
+If you want to remove some of the objects from the list during a traversal, you can do so using an iterator. Calling the remove method of the iterator object neatly removes form the list the item returned by the iterator with the previous next call. Here's a working example of the version of the method:
+```java
+public class Hand {
+    // ...
+
+    public void removeWorst(int value) {
+        Iterator<Card> iterator = cards.iterator();
+
+        while (iterator.hasNext()) {
+            if (iterator.next().getValue() < value) {
+                // removing from the list the element returned by the previous next-method call
+                iterator.remove();
+            }
+        }
+    }
+}
+```
+### Class diagrams
+![Alt text](image.png)
+![Alt text](image-1.png)
+### Packages
+Every package, including the default package, may contain other packages. For instance, in the package definition package library.domain the package domain is inside the package library. The word domain is often used to refer to the storage space of the classes that represent the concepts of the problem domain. For example, the class Book could be inside the package library.domain, since it represents a concept in the library application.
+
+<br>
+Application logic
+```java
+package flightControl.logic;
+
+import java.util.Collection;
+import flightControl.domain.Flight;
+import flightControl.domain.Airplane;
+import java.util.HashMap;
+import java.util.Map;
+import flightControl.domain.Place;
+
+public class FlightControl {
+
+    private HashMap<String, Airplane> airplanes = new HashMap<>();
+    private HashMap<String, Flight> flights = new HashMap<>();
+    private Map<String, Place> places;
+
+    public FlightControl() {
+        this.flights = new HashMap<>();
+        this.airplanes = new HashMap<>();
+        this.places = new HashMap<>();
+    }
+
+    public void addAirplane(String ID, int capacity) {
+        Airplane plane = new Airplane(ID, capacity);
+        this.airplanes.put(ID, plane);
+    }
+
+    public void addFlight(Airplane plane, String departureID, String destinationID) {
+        this.places.putIfAbsent(departureID, new Place(departureID));
+        this.places.putIfAbsent(destinationID, new Place(destinationID));
+
+        Flight flight = new Flight(plane, this.places.get(departureID), this.places.get(destinationID));
+        this.flights.put(flight.toString(), flight);
+    }
+
+    public Collection<Airplane> getAirplanes() {
+        return this.airplanes.values();
+    }
+
+    public Collection<Flight> getFlights() {
+        return this.flights.values();
+    }
+
+    public Airplane getAirplane(String ID) {
+        return this.airplanes.get(ID);
+    }
+
+```
+``````
+Text user interface
+```java
+package flightControl.ui;
+
+import flightControl.domain.Flight;
+import flightControl.domain.Airplane;
+import java.util.Scanner;
+import flightControl.logic.FlightControl;
+
+public class TextUI {
+
+    private FlightControl flightControl;
+    private Scanner scanner;
+
+    public TextUI(FlightControl flightControl, Scanner scanner) {
+        this.flightControl = flightControl;
+        this.scanner = scanner;
+    }
+
+    public void start() {
+        // let's start in two parts -- first start the asset control,
+        // then the flight control
+        startAssetControl();
+        System.out.println();
+        startFlightControl();
+        System.out.println();
+    }
+
+    private void startAssetControl() {
+        System.out.println("Airport Asset Control");
+        System.out.println("--------------------");
+        System.out.println();
+
+        while (true) {
+            System.out.println("Choose an action:");
+            System.out.println("[1] Add an airplane");
+            System.out.println("[2] Add a flight");
+            System.out.println("[x] Exit Airport Asset Control");
+
+            System.out.print("> ");
+            String answer = scanner.nextLine();
+
+            if (answer.equals("1")) {
+                addAirplane(scanner);
+            } else if (answer.equals("2")) {
+                addFlight(scanner);
+            } else if (answer.equals("x")) {
+                break;
+            }
+        }
+    }
+
+    private void addAirplane() {
+        System.out.print("Give the airplane id: ");
+        String id = scanner.nextLine();
+        System.out.print("Give the airplane capacity: ");
+        int capacity = Integer.parseInt(scanner.nextLine());
+
+        this.flightControl.addAirplane(id, capacity);
+    }
+
+    private void addFlight() {
+        System.out.print("Give the airplane id: ");
+        Airplane airplane = askForAirplane(scanner);
+        System.out.print("Give the departure airport id: ");
+        String departureID = scanner.nextLine();
+        System.out.print("Give the target airport id: ");
+        String destinationID = scanner.nextLine();
+
+        this.flightControl.addFlight(airplane, departureID, destinationID);
+    }
+
+    private void startFlightControl() {
+        System.out.println("Flight Control");
+        System.out.println("------------");
+        System.out.println();
+
+        while (true) {
+            System.out.println("Choose an action:");
+            System.out.println("[1] Print airplanes");
+            System.out.println("[2] Print flights");
+            System.out.println("[3] Print airplane details");
+            System.out.println("[x] Quit");
+
+            System.out.print("> ");
+            String answer = scanner.nextLine();
+            if (answer.equals("1")) {
+                printAirplanes();
+            } else if (answer.equals("2")) {
+                printFlights();
+            } else if (answer.equals("3")) {
+                printAirplaneDetails();
+            } else if (answer.equals("x")) {
+                break;
+            }
+        }
+    }
+
+    private void printAirplanes() {
+        for (Airplane plane : flightControl.getAirplanes()) {
+            System.out.println(plane);
+        }
+    }
+
+    private void printFlights() {
+        for (Flight flight : flightControl.getFlights()) {
+            System.out.println(flight);
+            System.out.println("");
+        }
+    }
+
+    private void printAirplaneDetails() {
+        System.out.print("Give the airplane id: ");
+        Airplane plane = askForAirplane();
+        System.out.println(plane);
+        System.out.println();
+    }
+
+    private Airplane askForAirplane() {
+        Airplane airplane = null;
+        while (airplane == null) {
+            String id = scanner.nextLine();
+            airplane = flightControl.getAirplane(id);
+
+            if (airplane == null) {
+                System.out.println("No airplane with the id " + id + ".");
+            }
+        }
+
+        return airplane;
+    }
+}
+```
+
+### Exceptions
+```java
+try {
+    // code which possibly throws an exception
+} catch (Exception e) {
+    // code block executed if an exception is thrown
+}
+```
+```java
+rrayList<String> lines =  new ArrayList<>();
+
+// create a Scanner object for reading files
+try (Scanner reader = new Scanner(new File("file.txt"))) {
+
+    // read all lines from a file
+    while (reader.hasNextLine()) {
+        lines.add(reader.nextLine());
+    }
+} catch (Exception e) {
+    System.out.println("Error: " + e.getMessage());
+}
+
+// do something with the lines
+```
+  ### processing file
+  ## PART 12
+  ## ArrayList and hash table
+  ## Randomness
+  ```java
+  import java.util.Random;
+
+public class Raffle {
+    public static void main(String[] args) {
+        Random ladyLuck = new Random(); // create Random object ladyLuck
+
+        for (int i = 0; i < 10; i++) {
+            // Draw and print a random number
+            int randomNumber = ladyLuck.nextInt(10);
+            System.out.println(randomNumber);
+        }
+    }
+}
+```
+Above we create an instance of the Randomclass. It has nextInt method, which gets an integer as a parameter. The method returns a random number between [0, integer[ or 0..(integer -1).
+<br>
+### Multidimensional data
+  matrix
+  ```java
+  int rows = 2;
+int columns = 3;
+int[][] twoDimensionalArray = new int[rows][columns];
+
+System.out.println("row, column, value");
+for (int row = 0; row < twoDimensionalArray.length; row++) {
+    for (int column = 0; column < twoDimensionalArray[row].length; column++) {
+        int value = twoDimensionalArray[row][column];
+        System.out.println("" + row + ", " + column + ", " + value);
+    }
+}
+```
+
 
 
 
