@@ -146,4 +146,4 @@ DAY 96 - AsyncIO module<Br>
 DAY 97 - multithreading<Br>
 DAY 98 - multiprocess<Br>
 DAY 99 - drink water solution<Br>
-DAY 100 - roadmap where to go from now.<Br>
+DAY 100 - roadmap where to go from now.
